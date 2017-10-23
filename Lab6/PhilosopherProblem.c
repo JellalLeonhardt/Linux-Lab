@@ -15,11 +15,12 @@ void philosopher(void);
 void philosopher(void){
     int state = 1; 
     int Philosophernum = PhilosopherNumber++;
+    srand(time(0));
     printf("哲学家%d开始思考了\n",Philosophernum+1);
     while(1){
         switch(state){
             case 0:    
-            sleep(1);
+            sleep(rand()%10);
             state = 1;
             printf("哲学家%d饿了\n",Philosophernum+1);
             break;
@@ -38,7 +39,7 @@ void philosopher(void){
             }
             break;
             case 2:
-            sleep(1);
+            sleep(rand()%10);
             state = 0;
             printf("哲学家%d进餐完毕，开始思考了\n",Philosophernum+1);
             pthread_mutex_unlock(&mutex[Philosophernum]);

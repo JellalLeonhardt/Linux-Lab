@@ -28,7 +28,7 @@ AREA *ShmAddr = NULL;
 union semun sem_union;
 
 void SemInit(){
-    SemID = semget(SemKey,3,IPC_CREAT|IPC_EXCL);
+    SemID = semget(SemKey,3,IPC_CREAT);
     if(SemID == -1){
         printf("创建信号量失败\n");
         exit(0);

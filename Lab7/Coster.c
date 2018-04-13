@@ -85,9 +85,9 @@ int main(int argv,char* args[]){
         		    Semaphore_P(2);
         		    return 1;
         		}
-			}
-        	Semaphore_V(0);
 		}
+        Semaphore_V(0);
+	}
     }
     return 0;
 }

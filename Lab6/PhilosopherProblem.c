@@ -86,7 +86,7 @@ int main(){
     char key = 0;
     while(key != 'q') key = getchar();
     for(i = 0;i < PhilosopherNum;i++){
-        pthread_cancel(&tid[i]);
+        pthread_cancel(tid[i]);
     }
     return 0;
 }

@@ -30,16 +30,17 @@ char buffer[1000];
 void SemInit(){
     SopsP.sem_num = 0;
     SopsP.sem_op = -1;
-    SopsP.sem_flg = SEM_UNDO;
+    SopsP.sem_flg = IPC_NOWAIT;
     SopsV.sem_num = 0;
     SopsV.sem_op = 1;
     SopsV.sem_flg = SEM_UNDO;
 }
-void Semaphore_P(int num){
+int Semaphore_P(int num){
     SopsP.sem_num = num;
     if(semop(SemID,&SopsP,1) == -1){
-        exit(0);
+        return -1;
     }
+	return 0;
 }
 void Semaphore_V(int num){
     SopsV.sem_num = num;
@@ -69,23 +70,24 @@ int main(int argv,char* args[]){
     char *p = NULL;
     int cnt;
     SemInit();
-	sleep(1);
     while(1){
-        Semaphore_P(0);
-        Semaphore_P(1);
-        i = semctl(SemID,1,GETVAL,0);
-        p = ShmAddr->buf[i];
-        cnt = ShmAddr->num[i];
-        fwrite(p,1,cnt,fp);
-        FinishedCnt++;
-        printf("Finishedcnt:%d\n",FinishedCnt);
-        Semaphore_V(0);
-        if(FinishedCnt == CreatorNum){
-            fclose(fp);
-            printf("消费者结束\n");
-            Semaphore_P(2);
-            return 1;
-        }
+        if(Semaphore_P(0) != -1){
+        	if(Semaphore_P(1) != -1){
+        		i = semctl(SemID,1,GETVAL,0);
+        		p = ShmAddr->buf[i];
+        		cnt = ShmAddr->num[i];
+        		fwrite(p,1,cnt,fp);
+        		FinishedCnt++;
+        		printf("Finishedcnt:%d\n",FinishedCnt);
+        		if(FinishedCnt == CreatorNum){
+        		    fclose(fp);
+        		    printf("消费者结束\n");
+        		    Semaphore_P(2);
+        		    return 1;
+        		}
+			}
+        	Semaphore_V(0);
+		}
     }
     return 0;
 }

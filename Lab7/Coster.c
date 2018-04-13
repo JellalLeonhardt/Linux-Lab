@@ -49,9 +49,9 @@ void Semaphore_V(int num){
 }
 
 int main(int argv,char* args[]){
-    SemID = atoi(args[1]);
-    ShmID = atoi(args[2]);
-    int CreatorNum = atoi(args[3]);
+    SemID = semget(SemKey,3,IPC_CREAT);
+    ShmID = shmget(ShmKey,sizeof(struct BufferArea),IPC_CREAT);
+    int CreatorNum = atoi(args[1]);
     // SemID = 2719744;
     // ShmID = 219009024;
     // int CreatorNum = 0;
@@ -59,7 +59,7 @@ int main(int argv,char* args[]){
     int i = 0;
     i = semctl(SemID,1,GETVAL,0);
     printf("消费者开始 semID:%d ShmID:%d CreatorNum:%d\n",SemID,ShmID,CreatorNum);
-    char *FileName = "Coster.txt";
+    char *FileName = "All.txt";
     FILE *fp = fopen(FileName,"w+");
     if(fp == 0){
         printf("creat %s falid\n",FileName);
@@ -69,6 +69,7 @@ int main(int argv,char* args[]){
     char *p = NULL;
     int cnt;
     SemInit();
+	sleep(1);
     while(1){
         Semaphore_P(0);
         Semaphore_P(1);

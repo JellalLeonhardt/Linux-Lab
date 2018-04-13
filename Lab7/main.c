@@ -87,8 +87,6 @@ int main(int args, char *argv[]){
     ShmInit();                                
     int CosterNum,i;
     char c = 0;
-    char number_SemID[50];
-    char number_ShmID[50];
     char number_i[50];
     char number_CreatorNum[50];
     int CreatorNum = args - 1;
@@ -98,36 +96,31 @@ int main(int args, char *argv[]){
     printf("消费者数量：%d\n",CreatorNum);
     pid_t pid;
     char *arg[4];
-    sprintf(number_SemID,"%d",SemID);
-    sprintf(number_ShmID,"%d",ShmID);
-    arg[0] = number_SemID;
-    arg[1] = number_ShmID;
     printf("开始创建生产者和消费者\n");
     Semaphore_P(2);
     for(i = 0;i < CreatorNum;i++){
         sprintf(number_i,"%d",i);
-        arg[2] = number_i;
-        arg[3] = argv[i+1];
+        arg[0] = number_i;
+        arg[1] = argv[i+1];
         pid = fork();
         if(pid == 0){
-            execl("/home/jellal/Linux实验/实验七/Creator","Creator",arg[0],arg[1],arg[2],arg[3],(char *)0);
+            execl("./Creator","Creator",arg[0],arg[1],NULL);
             perror( "execl" );
             printf("test%d\n",getpid());
             return 0;
         }
     }
     sprintf(number_CreatorNum,"%d",CreatorNum);
-    arg[2] = number_CreatorNum;
+    arg[0] = number_CreatorNum;
     pid = fork();
     if(pid == 0){
-        execl("/home/jellal/Linux实验/实验七/Coster","Coster",arg[0],arg[1],arg[2],NULL);
+        execl("./Coster","Coster",arg[0],NULL);
         perror( "execl" );
         printf("test%d\n",getpid());
         return 0;
     }
     pid = getpid();
     if(pid == MainPid){
-        printf("ASS\n");
         while(c != 'q') c = getchar();
         Semaphore_V(2);
         semctl(SemID,0,IPC_RMID,sem_union);

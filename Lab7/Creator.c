@@ -47,11 +47,11 @@ void Semaphore_V(int num){
 }
 
 int main(int argv,char* args[]){
-    SemID = atoi(args[1]);
-    ShmID = atoi(args[2]);
+	SemID = semget(SemKey,3,IPC_CREAT);
+    ShmID = shmget(ShmKey,sizeof(struct BufferArea),IPC_CREAT);
     ShmAddr = shmat(ShmID,NULL,0);
-    ID = atoi(args[3]);
-    char *FileName = args[4];
+    ID = atoi(args[1]);
+    char *FileName = args[2];
     printf("生产者%d开始 %s semID:%d ShmID:%d\n",ID,FileName,SemID,ShmID);
     FILE *fp = fopen(FileName,"r");
     int cnt = fread(buffer,1,100,fp); 

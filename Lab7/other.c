@@ -1,8 +1,6 @@
 #include "common.h"
 
 int main(){
-	SemInit();
-	ShmInit();
-	
+	GetID();
 	return 0;
 }
